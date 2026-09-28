@@ -1,0 +1,290 @@
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local MarketplaceService = game:GetService("MarketplaceService")
+
+if CoreGui:FindFirstChild("BeautifiedHubUI") then
+    CoreGui.BeautifiedHubUI:Destroy()
+end
+
+local currentPlaceId = game.PlaceId
+local gameName = "Unknown Game"
+pcall(function()
+    gameName = MarketplaceService:GetProductInfo(currentPlaceId).Name
+end)
+
+local HubGui = Instance.new("ScreenGui")
+HubGui.Name = "BeautifiedHubUI"
+HubGui.Parent = CoreGui
+HubGui.ResetOnSpawn = false
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 520, 0, 360)
+MainFrame.Position = UDim2.new(0.5, -260, 0.5, -180)
+MainFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
+MainFrame.BorderSizePixel = 0
+MainFrame.Parent = HubGui
+
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 12)
+MainCorner.Parent = MainFrame
+
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Thickness = 1
+MainStroke.Color = Color3.fromRGB(45, 45, 55)
+MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+MainStroke.Parent = MainFrame
+
+local TopBar = Instance.new("Frame")
+TopBar.Name = "TopBar"
+TopBar.Size = UDim2.new(1, 0, 0, 50)
+TopBar.BackgroundColor3 = Color3.fromRGB(24, 24, 30)
+TopBar.BorderSizePixel = 0
+TopBar.Parent = MainFrame
+
+local TopBarCorner = Instance.new("UICorner")
+TopBarCorner.CornerRadius = UDim.new(0, 12)
+TopBarCorner.Parent = TopBar
+
+local TopBarMask = Instance.new("Frame")
+TopBarMask.Size = UDim2.new(1, 0, 0, 12)
+TopBarMask.Position = UDim2.new(0, 0, 1, -12)
+TopBarMask.BackgroundColor3 = Color3.fromRGB(24, 24, 30)
+TopBarMask.BorderSizePixel = 0
+TopBarMask.Parent = TopBar
+
+local HeaderDivider = Instance.new("Frame")
+HeaderDivider.Size = UDim2.new(1, 0, 0, 1)
+HeaderDivider.Position = UDim2.new(0, 0, 1, -1)
+HeaderDivider.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+HeaderDivider.BorderSizePixel = 0
+HeaderDivider.Parent = TopBar
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(0.6, 0, 1, 0)
+Title.Position = UDim2.new(0, 16, 0, 0)
+Title.Text = "XYWARCH HUB"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 16
+Title.BackgroundTransparency = 1
+Title.Parent = TopBar
+
+local SubTitle = Instance.new("TextLabel")
+SubTitle.Size = UDim2.new(0.6, 0, 0, 14)
+SubTitle.Position = UDim2.new(0, 16, 0, 28)
+SubTitle.Text = gameName
+SubTitle.TextColor3 = Color3.fromRGB(140, 140, 160)
+SubTitle.TextXAlignment = Enum.TextXAlignment.Left
+SubTitle.Font = Enum.Font.Gotham
+SubTitle.TextSize = 11
+SubTitle.BackgroundTransparency = 1
+SubTitle.Parent = TopBar
+
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Size = UDim2.new(0, 28, 0, 28)
+CloseBtn.Position = UDim2.new(1, -38, 0, 11)
+CloseBtn.Text = "✕"
+CloseBtn.TextColor3 = Color3.fromRGB(180, 180, 190)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.TextSize = 12
+CloseBtn.Parent = TopBar
+
+local CloseCorner = Instance.new("UICorner")
+CloseCorner.CornerRadius = UDim.new(0, 6)
+CloseCorner.Parent = CloseBtn
+
+CloseBtn.MouseEnter:Connect(function()
+    TweenService:Create(CloseBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(220, 50, 50), TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
+end)
+
+CloseBtn.MouseLeave:Connect(function()
+    TweenService:Create(CloseBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(35, 35, 45), TextColor3 = Color3.fromRGB(180, 180, 190)}):Play()
+end)
+
+CloseBtn.MouseButton1Click:Connect(function()
+    HubGui:Destroy()
+end)
+
+local ScriptContainer = Instance.new("ScrollingFrame")
+ScriptContainer.Size = UDim2.new(1, -24, 1, -66)
+ScriptContainer.Position = UDim2.new(0, 12, 0, 58)
+ScriptContainer.BackgroundTransparency = 1
+ScriptContainer.ScrollBarThickness = 3
+ScriptContainer.ScrollBarImageColor3 = Color3.fromRGB(80, 80, 100)
+ScriptContainer.Parent = MainFrame
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Parent = ScriptContainer
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 8)
+
+local function AddScriptButton(title, description, badgeText, callback)
+    local Button = Instance.new("TextButton")
+    Button.Size = UDim2.new(1, -6, 0, 56)
+    Button.BackgroundColor3 = Color3.fromRGB(26, 26, 34)
+    Button.Text = ""
+    Button.AutoButtonColor = false
+    Button.Parent = ScriptContainer
+
+    local BtnCorner = Instance.new("UICorner")
+    BtnCorner.CornerRadius = UDim.new(0, 8)
+    BtnCorner.Parent = Button
+
+    local BtnStroke = Instance.new("UIStroke")
+    BtnStroke.Thickness = 1
+    BtnStroke.Color = Color3.fromRGB(40, 40, 50)
+    BtnStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    BtnStroke.Parent = Button
+
+    local BtnTitle = Instance.new("TextLabel")
+    BtnTitle.Size = UDim2.new(1, -100, 0, 20)
+    BtnTitle.Position = UDim2.new(0, 14, 0, 10)
+    BtnTitle.Text = title
+    BtnTitle.TextColor3 = Color3.fromRGB(240, 240, 245)
+    BtnTitle.TextXAlignment = Enum.TextXAlignment.Left
+    BtnTitle.Font = Enum.Font.GothamBold
+    BtnTitle.TextSize = 14
+    BtnTitle.BackgroundTransparency = 1
+    BtnTitle.Parent = Button
+
+    local BtnDesc = Instance.new("TextLabel")
+    BtnDesc.Size = UDim2.new(1, -30, 0, 16)
+    BtnDesc.Position = UDim2.new(0, 14, 0, 30)
+    BtnDesc.Text = description
+    BtnDesc.TextColor3 = Color3.fromRGB(130, 130, 145)
+    BtnDesc.TextXAlignment = Enum.TextXAlignment.Left
+    BtnDesc.Font = Enum.Font.Gotham
+    BtnDesc.TextSize = 12
+    BtnDesc.BackgroundTransparency = 1
+    BtnDesc.Parent = Button
+
+    if badgeText then
+        local Badge = Instance.new("Frame")
+        Badge.Size = UDim2.new(0, 70, 0, 20)
+        Badge.Position = UDim2.new(1, -80, 0, 10)
+        Badge.BackgroundColor3 = Color3.fromRGB(35, 45, 60)
+        Badge.BorderSizePixel = 0
+        Badge.Parent = Button
+
+        local BadgeCorner = Instance.new("UICorner")
+        BadgeCorner.CornerRadius = UDim.new(0, 4)
+        BadgeCorner.Parent = Badge
+
+        local BadgeLabel = Instance.new("TextLabel")
+        BadgeLabel.Size = UDim2.new(1, 0, 1, 0)
+        BadgeLabel.Text = badgeText
+        BadgeLabel.TextColor3 = Color3.fromRGB(100, 180, 255)
+        BadgeLabel.Font = Enum.Font.GothamBold
+        BadgeLabel.TextSize = 10
+        BadgeLabel.BackgroundTransparency = 1
+        BadgeLabel.Parent = Badge
+    end
+
+    Button.MouseEnter:Connect(function()
+        TweenService:Create(Button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(34, 34, 46)}):Play()
+        TweenService:Create(BtnStroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(80, 80, 110)}):Play()
+    end)
+
+    Button.MouseLeave:Connect(function()
+        TweenService:Create(Button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(26, 26, 34)}):Play()
+        TweenService:Create(BtnStroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(40, 40, 50)}):Play()
+    end)
+
+    Button.MouseButton1Click:Connect(function()
+        local Flash = TweenService:Create(Button, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(50, 50, 70)})
+        Flash:Play()
+        Flash.Completed:Connect(function()
+            TweenService:Create(Button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(34, 34, 46)}):Play()
+        end)
+        pcall(callback)
+    end)
+end
+
+local dragging, dragStart, startPos
+TopBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = MainFrame.Position
+    end
+end)
+
+TopBar.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        TweenService:Create(MainFrame, TweenInfo.new(0.05), {
+            Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        }):Play()
+    end
+end)
+
+local GameConfigs = {
+    [79546208627805] = function()
+        AddScriptButton("Execute Kyo Loader", "Runs current 99 Nights script suite", "ACTIVE", function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/kyruxv1/kyo-scripts/refs/heads/main/loader.txt"))()
+        end)
+    end,
+
+    [142823291] = function()
+        AddScriptButton("Execute MM2 Loader", "Runs BlutXodes MM2 features", "ACTIVE", function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/BlutXodes/loaderr/refs/heads/main/mm2"))()
+        end)
+    end,
+
+    [124216119978534] = function()
+        AddScriptButton("Execute Ride a Pet", "Loads Pastefy payload", "ACTIVE", function()
+            loadstring(game:HttpGet("https://pastefy.app/lym2rUW6/raw"))()
+        end)
+    end,
+
+    [4924922222] = function()
+        AddScriptButton("Execute SP Hub", "Loads Brookhaven SP Hub module", "ACTIVE", function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/as6cd0/SP_Hub/refs/heads/main/Brookhaven"))()
+        end)
+    end,
+
+    [113290951185459] = function()
+        AddScriptButton("Execute Selton Loader", "Runs Sel01 loader module", "ACTIVE", function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/seltonmt012/sel01-rbx/main/loader.lua"))()
+        end)
+    end,
+
+    [77649408247578] = function()
+        AddScriptButton("Execute xGRS Loader", "Runs Dungeon Quest API loader", "ACTIVE", function()
+            loadstring(game:HttpGet("https://api.xgrs.lol/storage/xgrs-loader"))()
+        end)
+    end,
+
+    ["Universal"] = function()
+        AddScriptButton("WalkSpeed (50)", "Increases local movement speed", "GLOBAL", function()
+            local char = game.Players.LocalPlayer.Character
+            if char and char:FindFirstChild("Humanoid") then
+                char.Humanoid.WalkSpeed = 50
+            end
+        end)
+        AddScriptButton("Infinite Jump", "Allows air jumping without restrictions", "GLOBAL", function()
+            UserInputService.JumpRequest:Connect(function()
+                local char = game.Players.LocalPlayer.Character
+                if char and char:FindFirstChild("Humanoid") then
+                    char.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                end
+            end)
+        end)
+    end
+}
+
+if GameConfigs[currentPlaceId] then
+    GameConfigs[currentPlaceId]()
+else
+    GameConfigs["Universal"]()
+end
